@@ -60,6 +60,9 @@ def chat():
 
         user_message = data['message'].strip()
         conversation_id = data.get('conversation_id', 'default')
+        model = data.get('model', 'aeon-infinity')
+        temperature = data.get('temperature', 0.7)
+        max_tokens = data.get('max_tokens', 1000)
 
         if not user_message:
             return jsonify({
