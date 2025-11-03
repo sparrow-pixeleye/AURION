@@ -169,14 +169,14 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
         }
 
           # Map model names to actual models
-        model_mapping = {
-            'aeon-infinity': MODEL_NAME,
-            'aeon-creative': MODEL_NAME,
-            'aeon-precise': MODEL_NAME,
-            'aeon-fast': MODEL_NAME
-        }
+    model_mapping = {
+        'aeon-infinity': PRIMARY_MODEL,
+        'aeon-creative': "anthropic/claude-3.5-sonnet",
+        'aeon-precise': "openai/gpt-4o",
+        'aeon-fast': "meta-llama/llama-3.1-8b-instruct"
+    }
 
-        selected_model = model_mapping.get(model, MODEL_NAME)
+    selected_model = model_mapping.get(model, PRIMARY_MODEL)
 
         payload = {
             "model": selected_model,
