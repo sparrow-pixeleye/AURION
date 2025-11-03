@@ -1,4 +1,4 @@
-# AEON ∞ (Infinity Intelligence)
+# AEON Infinity (Infinity Intelligence)
 
 *Created by Apratim Mrinal*
 
