@@ -126,6 +126,9 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
 
     Args:
         user_message: User's message
+        model: Model selection
+        temperature: Response creativity
+        max_tokens: Maximum response length
 
     Returns:
         AI response text
