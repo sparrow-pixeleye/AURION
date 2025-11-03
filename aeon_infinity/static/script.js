@@ -1,5 +1,5 @@
 /**
- * AEON ∞ — Infinity Intelligence
+ * AEON Infinity — Infinity Intelligence
  * Frontend JavaScript Implementation
  * Created by Apratim Mrinal
  */
