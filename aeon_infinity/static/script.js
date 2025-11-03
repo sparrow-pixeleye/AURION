@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add special message
             if (window.AEON) {
                 window.AEON.addMessage(
-                    '∞ You\'ve discovered the infinity sequence! AEON acknowledges your curiosity.',
+                    'Infinity! You\'ve discovered the infinity sequence! AEON acknowledges your curiosity.',
                     'assistant'
                 );
             }
