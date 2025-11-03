@@ -288,6 +288,22 @@ def health_check():
     })
 
 
+@app.route('/models', methods=['GET'])
+def list_models():
+    """List available models."""
+    return jsonify({
+        'primary_model': PRIMARY_MODEL,
+        'fallback_models': FALLBACK_MODELS,
+        'model_mapping': {
+            'aeon-infinity': PRIMARY_MODEL,
+            'aeon-creative': "anthropic/claude-3.5-sonnet",
+            'aeon-precise': "openai/gpt-4o",
+            'aeon-fast': "meta-llama/llama-3.1-8b-instruct"
+        },
+        'api_key_configured': bool(OPENROUTER_API_KEY)
+    })
+
+
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors."""
