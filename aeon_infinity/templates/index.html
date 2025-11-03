@@ -3,154 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEON Infinity — Infinity Intelligence</title>
-    <meta name="description" content="AEON Infinity — The ultimate AI intelligence interface created by Apratim Mrinal">
+    <title>AEON Infinity</title>
+    <meta name="description" content="AEON Infinity — Advanced AI conversation interface">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <!-- Meta tags for PWA -->
-    <meta name="theme-color" content="#0A0F1F">
+    <meta name="theme-color" content="#f8f9fa">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
-    <!-- Animated Background Canvas -->
-    <canvas id="particleCanvas" class="particle-canvas"></canvas>
-
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- AEON Header -->
-        <header class="aeon-header">
-            <div class="header-content">
-                <!-- AEON Logo/Orb -->
-                <div class="aeon-logo" id="aeonLogo">
-                    <div class="orb-container">
-                        <div class="orb-inner"></div>
-                        <div class="orb-outer"></div>
-                        <div class="orb-glow"></div>
-                        <div class="orb-pulse"></div>
-                    </div>
-                    <div class="logo-text">
-                        <h1 class="aeon-title">AEON Infinity</h1>
-                        <p class="aeon-subtitle">Infinity Intelligence</p>
-                    </div>
-                </div>
-
-                <!-- Theme Toggle -->
-                <div class="header-controls">
-                    <button class="theme-toggle" id="themeToggle" title="Toggle Theme (Ctrl+T)">
-                        <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="12" r="5"/>
-                            <line x1="12" y1="1" x2="12" y2="3"/>
-                            <line x1="12" y1="21" x2="12" y2="23"/>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                            <line x1="1" y1="12" x2="3" y2="12"/>
-                            <line x1="21" y1="12" x2="23" y2="12"/>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                        </svg>
-                        <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                        </svg>
-                    </button>
-                </div>
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span class="material-icons">menu</span>
+                </button>
+                <h1 class="app-title">AEON Infinity</h1>
+            </div>
+            <div class="header-right">
+                <button class="header-button" id="newChatBtn" title="New chat">
+                    <span class="material-icons">add</span>
+                </button>
+                <button class="header-button" id="shareBtn" title="Share chat">
+                    <span class="material-icons">share</span>
+                </button>
+                <button class="header-button" id="themeToggle" title="Toggle theme">
+                    <span class="material-icons">dark_mode</span>
+                </button>
+                <button class="header-button" id="settingsBtn" title="Settings">
+                    <span class="material-icons">settings</span>
+                </button>
             </div>
         </header>
 
-        <!-- Chat Container -->
-        <main class="chat-container">
-            <div class="chat-wrapper">
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <button class="new-chat-button" id="sidebarNewChatBtn">
+                        <span class="material-icons">add</span>
+                        New chat
+                    </button>
+                </div>
+                <div class="sidebar-content">
+                    <div class="chat-history" id="chatHistory">
+                        <!-- Chat history items will be added here -->
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="model-selector">
+                        <label class="model-label">Model</label>
+                        <select class="model-select" id="modelSelect">
+                            <option value="aeon-infinity">AEON Infinity (Default)</option>
+                            <option value="aeon-creative">AEON Creative</option>
+                            <option value="aeon-precise">AEON Precise</option>
+                            <option value="aeon-fast">AEON Fast</option>
+                        </select>
+                    </div>
+                    <div class="sidebar-actions">
+                        <button class="sidebar-action-btn" id="clearMemoryBtn">
+                            <span class="material-icons">delete_outline</span>
+                            Clear conversations
+                        </button>
+                        <button class="sidebar-action-btn" id="exportBtn">
+                            <span class="material-icons">download</span>
+                            Export conversations
+                        </button>
+                        <button class="sidebar-action-btn" id="helpBtn">
+                            <span class="material-icons">help_outline</span>
+                            Help
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Area -->
+            <main class="chat-area" id="chatArea">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <div class="welcome-title">
+                            <h1>Hello there</h1>
+                            <p>How can I help you today?</p>
+                        </div>
+                        <div class="suggestion-cards">
+                            <div class="suggestion-card" data-suggestion="Tell me about quantum computing">
+                                <span class="material-icons">science</span>
+                                <p>Tell me about quantum computing</p>
+                            </div>
+                            <div class="suggestion-card" data-suggestion="Help me write a professional email">
+                                <span class="material-icons">email</span>
+                                <p>Help me write a professional email</p>
+                            </div>
+                            <div class="suggestion-card" data-suggestion="What's the current time and date?">
+                                <span class="material-icons">schedule</span>
+                                <p>What's the current time and date?</p>
+                            </div>
+                            <div class="suggestion-card" data-suggestion="Search for latest AI news">
+                                <span class="material-icons">travel_explore</span>
+                                <p>Search for latest AI news</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Messages Container -->
                 <div class="messages-container" id="messagesContainer">
-                    <!-- Welcome Message -->
-                    <div class="message assistant-message fade-in">
-                        <div class="message-avatar">
-                            <div class="avatar-orb"></div>
-                        </div>
-                        <div class="message-content">
-                            <div class="message-text">
-                                Welcome to AEON Infinity — Infinity Intelligence. I embody the collective wisdom and precision of every major AI, with real-time awareness and access to live web data. How may I assist you today?
-                            </div>
-                            <div class="message-timestamp">Just now</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Loading Indicator -->
-                <div class="loading-indicator" id="loadingIndicator">
-                    <div class="loading-orb">
-                        <div class="loading-pulse"></div>
-                    </div>
-                    <div class="loading-text">Thinking...</div>
-                </div>
-
-                <!-- Memory Status -->
-                <div class="memory-status" id="memoryStatus">
-                    <span class="memory-info">
-                        <span id="memoryCount">0</span> / 20 messages
-                    </span>
-                    <button class="clear-memory-btn" id="clearMemoryBtn" title="Clear Memory (Ctrl+L)">
-                        Clear
-                    </button>
+                    <!-- Messages will be added here -->
                 </div>
 
                 <!-- Input Area -->
                 <div class="input-area">
-                    <div class="input-wrapper">
-                        <textarea
-                            class="message-input"
-                            id="messageInput"
-                            placeholder="Ask me anything..."
-                            rows="1"
-                            maxlength="2000"
-                        ></textarea>
-                        <button class="send-button" id="sendButton" title="Send Message (Enter)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <line x1="22" y1="2" x2="11" y2="13"/>
-                                <polygon points="22,2 15,22 11,13 2,9 22,2"/>
-                            </svg>
-                        </button>
+                    <div class="input-container">
+                        <div class="input-wrapper">
+                            <button class="input-button" id="attachBtn" title="Add file">
+                                <span class="material-icons">attach_file</span>
+                            </button>
+                            <textarea
+                                class="message-input"
+                                id="messageInput"
+                                placeholder="Enter a prompt here"
+                                rows="1"
+                                maxlength="2000"
+                            ></textarea>
+                            <button class="input-button" id="microphoneBtn" title="Voice input">
+                                <span class="material-icons">mic</span>
+                            </button>
+                            <button class="send-button" id="sendButton" title="Send message">
+                                <span class="material-icons">send</span>
+                            </button>
+                        </div>
+                        <div class="input-footer">
+                            <span class="input-info">AEON Infinity can make mistakes. Consider checking important information.</span>
+                        </div>
                     </div>
+                </div>
+            </main>
+        </div>
+    </div>
 
-                    <!-- Memory Toggle -->
-                    <div class="memory-toggle">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="memoryToggle" checked>
-                            <span class="toggle-slider"></span>
-                            <span class="toggle-text">Persistent Memory</span>
-                        </label>
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="settingsClose">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <h3>Conversation</h3>
+                    <label class="setting-toggle">
+                        <span>Memory</span>
+                        <input type="checkbox" id="memoryToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="setting-toggle">
+                        <span>Auto-scroll</span>
+                        <input type="checkbox" id="autoScrollToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <h3>Appearance</h3>
+                    <label class="setting-toggle">
+                        <span>Dark theme</span>
+                        <input type="checkbox" id="darkThemeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="setting-toggle">
+                        <span>Animations</span>
+                        <input type="checkbox" id="animationsToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <h3>Advanced</h3>
+                    <div class="setting-item">
+                        <span>Temperature</span>
+                        <input type="range" id="temperatureSlider" min="0" max="1" step="0.1" value="0.7">
+                        <span class="setting-value" id="temperatureValue">0.7</span>
                     </div>
-
-                    <!-- Keyboard Shortcuts -->
-                    <div class="keyboard-shortcuts">
-                        <span class="shortcut">Enter → Send</span>
-                        <span class="shortcut">Shift+Enter → New Line</span>
-                        <span class="shortcut">Ctrl+L → Clear</span>
-                        <span class="shortcut">Ctrl+T → Theme</span>
+                    <div class="setting-item">
+                        <span>Max tokens</span>
+                        <input type="number" id="maxTokensInput" min="100" max="2000" value="1000">
                     </div>
                 </div>
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="aeon-footer">
-            <p>Created by Apratim Mrinal</p>
-        </footer>
+        </div>
     </div>
 
-    <!-- Audio for chime -->
-    <audio id="chimeAudio" preload="auto">
-        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
-    </audio>
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share conversation</h2>
+                <button class="modal-close" id="shareClose">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <button class="share-option">
+                        <span class="material-icons">link</span>
+                        <span>Copy link</span>
+                    </button>
+                    <button class="share-option">
+                        <span class="material-icons">download</span>
+                        <span>Export conversation</span>
+                    </button>
+                    <button class="share-option">
+                        <span class="material-icons">public</span>
+                        <span>Publish as public</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
