@@ -161,25 +161,25 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
             "X-Title": "AEON Infinity Intelligence"
         }
 
-        # Map model names to actual models
-      model_mapping = {
-          'aeon-infinity': MODEL_NAME,
-          'aeon-creative': MODEL_NAME,
-          'aeon-precise': MODEL_NAME,
-          'aeon-fast': MODEL_NAME
-      }
+          # Map model names to actual models
+    model_mapping = {
+        'aeon-infinity': MODEL_NAME,
+        'aeon-creative': MODEL_NAME,
+        'aeon-precise': MODEL_NAME,
+        'aeon-fast': MODEL_NAME
+    }
 
-      selected_model = model_mapping.get(model, MODEL_NAME)
+    selected_model = model_mapping.get(model, MODEL_NAME)
 
-      payload = {
-            "model": selected_model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "top_p": 1,
-            "frequency_penalty": 0,
-            "presence_penalty": 0
-        }
+    payload = {
+        "model": selected_model,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "top_p": 1,
+        "frequency_penalty": 0,
+        "presence_penalty": 0
+    }
 
         response = requests.post(
             OPENROUTER_API_URL,
