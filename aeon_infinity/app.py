@@ -271,7 +271,7 @@ if __name__ == '__main__':
     # Get port from environment or use default
     port = int(os.getenv('PORT', 5000))
 
-    print("🌌 AEON ∞ (Infinity Intelligence)")
+    print("🌌 AEON Infinity Intelligence")
     print("Created by Apratim Mrinal")
     print(f"🚀 Starting server on http://127.0.0.1:{port}")
     print("📱 Ready to serve infinite intelligence...")
