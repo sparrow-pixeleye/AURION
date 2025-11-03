@@ -87,7 +87,7 @@ def chat():
             response_type = 'search'
 
         else:  # Normal conversation
-            response_text = get_ai_response(user_message)
+            response_text = get_ai_response(user_message, model, temperature, max_tokens)
             response_type = 'normal'
 
         # Save assistant response to memory
