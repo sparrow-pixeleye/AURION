@@ -120,7 +120,7 @@ def chat():
         }), 500
 
 
-def get_ai_response(user_message: str) -> str:
+def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature: float = 0.7, max_tokens: int = 1000) -> str:
     """
     Get AI response from OpenRouter API.
 
