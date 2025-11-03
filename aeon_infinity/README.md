@@ -62,7 +62,7 @@
    # OPENROUTER_API_KEY=your_openrouter_api_key_here
    ```
 
-4. **Run AEON ∞**:
+4. **Run AEON Infinity**:
    ```bash
    python app.py
    ```
