@@ -1,15 +1,25 @@
 /**
- * AEON Infinity — Infinity Intelligence
- * Frontend JavaScript Implementation
+ * AEON Infinity - Gemini-Style AI Interface
+ * Complete JavaScript implementation with all Gemini features
  * Created by Apratim Mrinal
  */
 
-class AEONInfinity {
+class AEONGeminiInterface {
     constructor() {
         this.conversationId = this.generateConversationId();
+        this.currentChatId = this.generateChatId();
         this.isProcessing = false;
-        this.particles = [];
-        this.animationId = null;
+        this.settings = {
+            memory: true,
+            autoScroll: true,
+            darkTheme: false,
+            animations: true,
+            temperature: 0.7,
+            maxTokens: 1000
+        };
+
+        this.chatHistory = [];
+        this.currentMessages = [];
 
         this.init();
     }
@@ -17,176 +27,283 @@ class AEONInfinity {
     init() {
         this.setupElements();
         this.setupEventListeners();
-        this.initParticleBackground();
-        this.loadTheme();
-        this.updateMemoryStatus();
+        this.loadSettings();
+        this.loadChatHistory();
+        this.applyTheme();
         this.setupKeyboardShortcuts();
+        this.initializeInterface();
     }
 
     setupElements() {
-        // Core elements
+        // Main elements
+        this.sidebar = document.getElementById('sidebar');
+        this.chatArea = document.getElementById('chatArea');
         this.messagesContainer = document.getElementById('messagesContainer');
+        this.welcomeScreen = document.getElementById('welcomeScreen');
         this.messageInput = document.getElementById('messageInput');
         this.sendButton = document.getElementById('sendButton');
-        this.loadingIndicator = document.getElementById('loadingIndicator');
-        this.aeonLogo = document.getElementById('aeonLogo');
 
-        // Controls
+        // Header elements
+        this.sidebarToggle = document.getElementById('sidebarToggle');
+        this.newChatBtn = document.getElementById('newChatBtn');
+        this.shareBtn = document.getElementById('shareBtn');
         this.themeToggle = document.getElementById('themeToggle');
-        this.memoryToggle = document.getElementById('memoryToggle');
+        this.settingsBtn = document.getElementById('settingsBtn');
+
+        // Sidebar elements
+        this.sidebarNewChatBtn = document.getElementById('sidebarNewChatBtn');
+        this.chatHistory = document.getElementById('chatHistory');
+        this.modelSelect = document.getElementById('modelSelect');
         this.clearMemoryBtn = document.getElementById('clearMemoryBtn');
+        this.exportBtn = document.getElementById('exportBtn');
+        this.helpBtn = document.getElementById('helpBtn');
 
-        // Status
-        this.memoryCount = document.getElementById('memoryCount');
-        this.chimeAudio = document.getElementById('chimeAudio');
+        // Input elements
+        this.attachBtn = document.getElementById('attachBtn');
+        this.microphoneBtn = document.getElementById('microphoneBtn');
 
-        // Canvas
-        this.canvas = document.getElementById('particleCanvas');
-        this.ctx = this.canvas.getContext('2d');
+        // Modal elements
+        this.settingsModal = document.getElementById('settingsModal');
+        this.shareModal = document.getElementById('shareModal');
+        this.settingsClose = document.getElementById('settingsClose');
+        this.shareClose = document.getElementById('shareClose');
 
-        // Input state
-        this.usePersistentMemory = true;
+        // Settings elements
+        this.memoryToggle = document.getElementById('memoryToggle');
+        this.autoScrollToggle = document.getElementById('autoScrollToggle');
+        this.darkThemeToggle = document.getElementById('darkThemeToggle');
+        this.animationsToggle = document.getElementById('animationsToggle');
+        this.temperatureSlider = document.getElementById('temperatureSlider');
+        this.temperatureValue = document.getElementById('temperatureValue');
+        this.maxTokensInput = document.getElementById('maxTokensInput');
+
+        // Other elements
+        this.toast = document.getElementById('toast');
+        this.toastMessage = document.getElementById('toastMessage');
+        this.suggestionCards = document.querySelectorAll('.suggestion-card');
     }
 
     setupEventListeners() {
-        // Send message
-        this.sendButton.addEventListener('click', () => this.sendMessage());
-
-        // Input events
-        this.messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                this.sendMessage();
-            }
-        });
-
-        // Auto-resize textarea
-        this.messageInput.addEventListener('input', () => {
-            this.autoResizeTextarea();
-            this.updateSendButton();
-        });
-
-        // Theme toggle
+        // Header buttons
+        this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
+        this.newChatBtn.addEventListener('click', () => this.createNewChat());
+        this.shareBtn.addEventListener('click', () => this.openShareModal());
         this.themeToggle.addEventListener('click', () => this.toggleTheme());
+        this.settingsBtn.addEventListener('click', () => this.openSettingsModal());
 
-        // Memory controls
-        this.memoryToggle.addEventListener('change', (e) => {
-            this.usePersistentMemory = e.target.checked;
-            this.saveMemoryPreference();
+        // Sidebar buttons
+        this.sidebarNewChatBtn.addEventListener('click', () => this.createNewChat());
+        this.clearMemoryBtn.addEventListener('click', () => this.clearAllConversations());
+        this.exportBtn.addEventListener('click', () => this.exportConversations());
+        this.helpBtn.addEventListener('click', () => this.showHelp());
+
+        // Model selector
+        this.modelSelect.addEventListener('change', (e) => this.handleModelChange(e.target.value));
+
+        // Input area
+        this.sendButton.addEventListener('click', () => this.sendMessage());
+        this.messageInput.addEventListener('keydown', (e) => this.handleInputKeydown(e));
+        this.messageInput.addEventListener('input', () => this.handleInputChange());
+        this.attachBtn.addEventListener('click', () => this.handleFileAttach());
+        this.microphoneBtn.addEventListener('click', () => this.handleVoiceInput());
+
+        // Suggestion cards
+        this.suggestionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const suggestion = card.dataset.suggestion;
+                this.messageInput.value = suggestion;
+                this.sendMessage();
+            });
         });
 
-        this.clearMemoryBtn.addEventListener('click', () => this.clearMemory());
+        // Modal close buttons
+        this.settingsClose.addEventListener('click', () => this.closeSettingsModal());
+        this.shareClose.addEventListener('click', () => this.closeShareModal());
 
-        // Window resize
-        window.addEventListener('resize', () => this.handleResize());
-
-        // Focus input on page load
-        setTimeout(() => this.messageInput.focus(), 100);
-    }
-
-    initParticleBackground() {
-        this.resizeCanvas();
-        this.createParticles();
-        this.animate();
-    }
-
-    resizeCanvas() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-    }
-
-    createParticles() {
-        const particleCount = Math.min(100, Math.floor((window.innerWidth * window.innerHeight) / 15000));
-
-        for (let i = 0; i < particleCount; i++) {
-            this.particles.push({
-                x: Math.random() * this.canvas.width,
-                y: Math.random() * this.canvas.height,
-                size: Math.random() * 3 + 1,
-                speedX: (Math.random() - 0.5) * 0.5,
-                speedY: (Math.random() - 0.5) * 0.5,
-                opacity: Math.random() * 0.5 + 0.3,
-                hue: Math.random() * 60 + 160 // Cyan to violet range
-            });
-        }
-    }
-
-    animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.particles.forEach(particle => {
-            // Update position
-            particle.x += particle.speedX;
-            particle.y += particle.speedY;
-
-            // Wrap around edges
-            if (particle.x < 0) particle.x = this.canvas.width;
-            if (particle.x > this.canvas.width) particle.x = 0;
-            if (particle.y < 0) particle.y = this.canvas.height;
-            if (particle.y > this.canvas.height) particle.y = 0;
-
-            // Draw particle
-            this.ctx.beginPath();
-            this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            this.ctx.fillStyle = `hsla(${particle.hue}, 100%, 60%, ${particle.opacity})`;
-            this.ctx.fill();
-
-            // Draw connections
-            this.particles.forEach(otherParticle => {
-                const distance = Math.sqrt(
-                    Math.pow(particle.x - otherParticle.x, 2) +
-                    Math.pow(particle.y - otherParticle.y, 2)
-                );
-
-                if (distance < 100 && distance > 0) {
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(particle.x, particle.y);
-                    this.ctx.lineTo(otherParticle.x, otherParticle.y);
-                    this.ctx.strokeStyle = `hsla(${particle.hue}, 100%, 60%, ${0.1 * (1 - distance / 100)})`;
-                    this.ctx.lineWidth = 0.5;
-                    this.ctx.stroke();
+        // Modal overlays
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal);
                 }
             });
         });
 
-        this.animationId = requestAnimationFrame(() => this.animate());
-    }
+        // Settings
+        this.memoryToggle.addEventListener('change', (e) => this.updateSetting('memory', e.target.checked));
+        this.autoScrollToggle.addEventListener('change', (e) => this.updateSetting('autoScroll', e.target.checked));
+        this.darkThemeToggle.addEventListener('change', (e) => this.updateSetting('darkTheme', e.target.checked));
+        this.animationsToggle.addEventListener('change', (e) => this.updateSetting('animations', e.target.checked));
+        this.temperatureSlider.addEventListener('input', (e) => {
+            this.updateSetting('temperature', parseFloat(e.target.value));
+            this.temperatureValue.textContent = e.target.value;
+        });
+        this.maxTokensInput.addEventListener('change', (e) => this.updateSetting('maxTokens', parseInt(e.target.value)));
 
-    setupKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            // Ctrl+L: Clear memory
-            if (e.ctrlKey && e.key === 'l') {
+        // Window resize
+        window.addEventListener('resize', () => this.handleResize());
+
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', (e) => {
+            if (this.currentMessages.length > 1) {
                 e.preventDefault();
-                this.clearMemory();
-            }
-
-            // Ctrl+T: Toggle theme
-            if (e.ctrlKey && e.key === 't') {
-                e.preventDefault();
-                this.toggleTheme();
-            }
-
-            // Escape: Focus input
-            if (e.key === 'Escape') {
-                this.messageInput.focus();
+                e.returnValue = '';
             }
         });
     }
 
+    initializeInterface() {
+        // Set initial states
+        this.updateSendButton();
+        this.autoResizeTextarea();
+
+        // Focus input on load
+        setTimeout(() => this.messageInput.focus(), 100);
+
+        // Welcome screen state
+        this.updateWelcomeScreen();
+    }
+
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + K - New chat
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                this.createNewChat();
+            }
+
+            // Ctrl/Cmd + / - Focus input
+            if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                e.preventDefault();
+                this.messageInput.focus();
+            }
+
+            // Ctrl/Cmd + S - Settings
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.openSettingsModal();
+            }
+
+            // Ctrl/Cmd + D - Toggle dark mode
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                this.toggleTheme();
+            }
+
+            // Escape - Close modals, focus input
+            if (e.key === 'Escape') {
+                const openModal = document.querySelector('.modal.active');
+                if (openModal) {
+                    this.closeModal(openModal);
+                } else {
+                    this.messageInput.focus();
+                }
+            }
+        });
+    }
+
+    // ===== Chat Management =====
+    createNewChat() {
+        // Save current chat if it has messages
+        if (this.currentMessages.length > 0) {
+            this.saveCurrentChat();
+        }
+
+        // Reset current state
+        this.currentChatId = this.generateChatId();
+        this.currentMessages = [];
+
+        // Clear UI
+        this.messagesContainer.innerHTML = '';
+        this.messageInput.value = '';
+        this.autoResizeTextarea();
+
+        // Update UI state
+        this.updateWelcomeScreen();
+        this.updateChatHistoryUI();
+        this.messageInput.focus();
+
+        this.showToast('New chat started');
+    }
+
+    saveCurrentChat() {
+        if (this.currentMessages.length === 0) return;
+
+        const chat = {
+            id: this.currentChatId,
+            title: this.generateChatTitle(this.currentMessages[0]?.content || 'New Chat'),
+            messages: this.currentMessages,
+            timestamp: new Date().toISOString(),
+            model: this.modelSelect.value
+        };
+
+        this.chatHistory.unshift(chat);
+
+        // Keep only last 50 chats
+        if (this.chatHistory.length > 50) {
+            this.chatHistory = this.chatHistory.slice(0, 50);
+        }
+
+        this.saveChatHistory();
+        this.updateChatHistoryUI();
+    }
+
+    loadChat(chatId) {
+        const chat = this.chatHistory.find(c => c.id === chatId);
+        if (!chat) return;
+
+        // Save current chat if it has messages
+        if (this.currentMessages.length > 0) {
+            this.saveCurrentChat();
+        }
+
+        // Load selected chat
+        this.currentChatId = chatId;
+        this.currentMessages = [...chat.messages];
+        this.modelSelect.value = chat.model;
+
+        // Update UI
+        this.renderMessages();
+        this.updateWelcomeScreen();
+        this.updateChatHistoryUI();
+        this.scrollToBottom();
+        this.messageInput.focus();
+    }
+
+    deleteChat(chatId) {
+        const index = this.chatHistory.findIndex(c => c.id === chatId);
+        if (index === -1) return;
+
+        this.chatHistory.splice(index, 1);
+        this.saveChatHistory();
+        this.updateChatHistoryUI();
+
+        // If deleted chat was current, create new chat
+        if (this.currentChatId === chatId) {
+            this.createNewChat();
+        }
+
+        this.showToast('Chat deleted');
+    }
+
+    // ===== Message Handling =====
     async sendMessage() {
         const message = this.messageInput.value.trim();
-
         if (!message || this.isProcessing) return;
 
-        // Add user message to UI
+        // Hide welcome screen
+        if (this.welcomeScreen) {
+            this.welcomeScreen.style.display = 'none';
+        }
+
+        // Add user message
         this.addMessage(message, 'user');
         this.messageInput.value = '';
         this.autoResizeTextarea();
-        this.updateSendButton();
 
         // Set processing state
         this.setProcessingState(true);
-        this.animateAeonLogo();
 
         try {
             const response = await fetch('/chat', {
@@ -196,7 +313,10 @@ class AEONInfinity {
                 },
                 body: JSON.stringify({
                     message: message,
-                    conversation_id: this.conversationId
+                    conversation_id: this.conversationId,
+                    model: this.modelSelect.value,
+                    temperature: this.settings.temperature,
+                    max_tokens: this.settings.maxTokens
                 })
             });
 
@@ -205,13 +325,7 @@ class AEONInfinity {
             }
 
             const data = await response.json();
-
-            // Add AI response to UI
             this.addMessage(data.response, 'assistant', data.type);
-            this.updateMemoryStatus();
-
-            // Play chime sound
-            this.playChime();
 
         } catch (error) {
             console.error('Error sending message:', error);
@@ -222,73 +336,154 @@ class AEONInfinity {
             );
         } finally {
             this.setProcessingState(false);
-            this.stopAeonLogoAnimation();
             this.messageInput.focus();
         }
     }
 
     addMessage(content, role, type = 'normal') {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${role}-message fade-in`;
+        const message = {
+            id: this.generateMessageId(),
+            content: content,
+            role: role,
+            type: type,
+            timestamp: new Date().toISOString()
+        };
 
-        const timestamp = new Date().toLocaleTimeString([], {
+        this.currentMessages.push(message);
+        this.renderMessage(message);
+        this.updateWelcomeScreen();
+
+        if (this.settings.autoScroll) {
+            this.scrollToBottom();
+        }
+    }
+
+    renderMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${message.role}-message`;
+        messageDiv.dataset.messageId = message.id;
+
+        const timestamp = new Date(message.timestamp).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit'
         });
 
+        const avatarText = message.role === 'user' ? 'U' : 'A';
+
         messageDiv.innerHTML = `
-            <div class="message-avatar">
-                <div class="avatar-orb"></div>
-            </div>
+            <div class="message-avatar">${avatarText}</div>
             <div class="message-content">
-                <div class="message-text">${this.escapeHtml(content)}</div>
-                <div class="message-timestamp">${timestamp}</div>
+                <div class="message-text">${this.escapeHtml(message.content)}</div>
+                <div class="message-actions">
+                    <button class="message-action-btn" onclick="aeon.copyMessage('${message.id}')" title="Copy">
+                        <span class="material-icons">content_copy</span>
+                    </button>
+                    <button class="message-action-btn" onclick="aeon.regenerateMessage('${message.id}')" title="Regenerate" ${message.role === 'user' ? 'style="display:none;"' : ''}>
+                        <span class="material-icons">refresh</span>
+                    </button>
+                    <button class="message-action-btn" onclick="aeon.editMessage('${message.id}')" title="Edit" ${message.role === 'user' ? '' : 'style="display:none;"'}>
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="message-action-btn" onclick="aeon.deleteMessage('${message.id}')" title="Delete">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
             </div>
         `;
 
         this.messagesContainer.appendChild(messageDiv);
-        this.scrollToBottom();
 
-        // Remove animation class after animation completes
-        setTimeout(() => {
-            messageDiv.classList.remove('fade-in');
-        }, 600);
+        if (this.settings.animations) {
+            // Trigger animation
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            }, 10);
+        }
+    }
+
+    renderMessages() {
+        this.messagesContainer.innerHTML = '';
+        this.currentMessages.forEach(message => {
+            this.renderMessage(message);
+        });
+    }
+
+    // ===== UI Management =====
+    updateWelcomeScreen() {
+        if (!this.welcomeScreen) return;
+
+        if (this.currentMessages.length === 0) {
+            this.welcomeScreen.style.display = 'flex';
+        } else {
+            this.welcomeScreen.style.display = 'none';
+        }
+    }
+
+    updateChatHistoryUI() {
+        this.chatHistory.innerHTML = '';
+
+        this.chatHistory.forEach(chat => {
+            const chatItem = document.createElement('div');
+            chatItem.className = `chat-history-item ${chat.id === this.currentChatId ? 'active' : ''}`;
+            chatItem.innerHTML = `
+                <div class="chat-title">${this.escapeHtml(chat.title)}</div>
+                <div class="chat-time">${this.formatChatTime(chat.timestamp)}</div>
+            `;
+
+            chatItem.addEventListener('click', () => this.loadChat(chat.id));
+
+            // Add right-click context menu
+            chatItem.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.showChatContextMenu(e, chat.id);
+            });
+
+            this.chatHistory.appendChild(chatItem);
+        });
+    }
+
+    toggleSidebar() {
+        this.sidebar.classList.toggle('hidden');
     }
 
     setProcessingState(processing) {
         this.isProcessing = processing;
         this.sendButton.disabled = processing;
         this.messageInput.disabled = processing;
+        this.updateSendButton();
 
         if (processing) {
-            this.loadingIndicator.classList.add('active');
+            this.addTypingIndicator();
         } else {
-            this.loadingIndicator.classList.remove('active');
-        }
-
-        this.updateSendButton();
-    }
-
-    animateAeonLogo() {
-        const orb = this.aeonLogo.querySelector('.orb-inner');
-        if (orb) {
-            orb.style.animation = 'orbBreathing 1s ease-in-out infinite';
+            this.removeTypingIndicator();
         }
     }
 
-    stopAeonLogoAnimation() {
-        const orb = this.aeonLogo.querySelector('.orb-inner');
-        if (orb) {
-            orb.style.animation = 'orbBreathing 3s ease-in-out infinite';
-        }
+    addTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message assistant-message typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">A</div>
+            <div class="message-content">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        `;
+        this.messagesContainer.appendChild(typingDiv);
+        this.scrollToBottom();
     }
 
-    autoResizeTextarea() {
-        this.messageInput.style.height = 'auto';
-        this.messageInput.style.height = Math.min(
-            this.messageInput.scrollHeight,
-            120
-        ) + 'px';
+    removeTypingIndicator() {
+        const typingIndicator = this.messagesContainer.querySelector('.typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
     }
 
     updateSendButton() {
@@ -296,127 +491,345 @@ class AEONInfinity {
         this.sendButton.disabled = !hasText || this.isProcessing;
     }
 
+    autoResizeTextarea() {
+        this.messageInput.style.height = 'auto';
+        this.messageInput.style.height = Math.min(
+            this.messageInput.scrollHeight,
+            200
+        ) + 'px';
+    }
+
     scrollToBottom() {
         this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
     }
 
+    // ===== Theme Management =====
     toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        this.settings.darkTheme = !this.settings.darkTheme;
+        this.applyTheme();
+        this.saveSettings();
+        this.updateThemeIcon();
+    }
 
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('aeon-theme', newTheme);
+    applyTheme() {
+        if (this.settings.darkTheme) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        this.darkThemeToggle.checked = this.settings.darkTheme;
+        this.updateThemeIcon();
+    }
 
-        // Update particle colors
-        this.particles.forEach(particle => {
-            particle.hue = newTheme === 'light' ?
-                Math.random() * 60 + 200 : // Blue range for light
-                Math.random() * 60 + 160;  // Cyan-violet for dark
+    updateThemeIcon() {
+        const icon = this.themeToggle.querySelector('.material-icons');
+        icon.textContent = this.settings.darkTheme ? 'light_mode' : 'dark_mode';
+    }
+
+    // ===== Settings Management =====
+    loadSettings() {
+        const saved = localStorage.getItem('aeon-settings');
+        if (saved) {
+            try {
+                this.settings = { ...this.settings, ...JSON.parse(saved) };
+            } catch (e) {
+                console.error('Error loading settings:', e);
+            }
+        }
+
+        // Apply settings to UI
+        this.memoryToggle.checked = this.settings.memory;
+        this.autoScrollToggle.checked = this.settings.autoScroll;
+        this.animationsToggle.checked = this.settings.animations;
+        this.temperatureSlider.value = this.settings.temperature;
+        this.temperatureValue.textContent = this.settings.temperature;
+        this.maxTokensInput.value = this.settings.maxTokens;
+    }
+
+    saveSettings() {
+        localStorage.setItem('aeon-settings', JSON.stringify(this.settings));
+    }
+
+    updateSetting(key, value) {
+        this.settings[key] = value;
+        this.saveSettings();
+    }
+
+    // ===== Modal Management =====
+    openSettingsModal() {
+        this.settingsModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeSettingsModal() {
+        this.settingsModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    openShareModal() {
+        if (this.currentMessages.length === 0) {
+            this.showToast('No messages to share');
+            return;
+        }
+        this.shareModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeShareModal() {
+        this.shareModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    closeModal(modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ===== Chat History Management =====
+    loadChatHistory() {
+        const saved = localStorage.getItem('aeon-chat-history');
+        if (saved) {
+            try {
+                this.chatHistory = JSON.parse(saved);
+                this.updateChatHistoryUI();
+            } catch (e) {
+                console.error('Error loading chat history:', e);
+                this.chatHistory = [];
+            }
+        }
+    }
+
+    saveChatHistory() {
+        localStorage.setItem('aeon-chat-history', JSON.stringify(this.chatHistory));
+    }
+
+    clearAllConversations() {
+        if (!confirm('Are you sure you want to clear all conversations? This action cannot be undone.')) {
+            return;
+        }
+
+        this.chatHistory = [];
+        this.currentMessages = [];
+        this.saveChatHistory();
+        this.updateChatHistoryUI();
+        this.messagesContainer.innerHTML = '';
+        this.updateWelcomeScreen();
+        this.showToast('All conversations cleared');
+    }
+
+    exportConversations() {
+        const exportData = {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            conversations: this.chatHistory,
+            currentConversation: {
+                id: this.currentChatId,
+                messages: this.currentMessages
+            }
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `aeon-conversations-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        this.showToast('Conversations exported successfully');
+    }
+
+    // ===== Message Actions =====
+    copyMessage(messageId) {
+        const message = this.currentMessages.find(m => m.id === messageId);
+        if (!message) return;
+
+        navigator.clipboard.writeText(message.content).then(() => {
+            this.showToast('Message copied');
+        }).catch(() => {
+            this.showToast('Failed to copy message');
         });
     }
 
-    loadTheme() {
-        const savedTheme = localStorage.getItem('aeon-theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+    regenerateMessage(messageId) {
+        const messageIndex = this.currentMessages.findIndex(m => m.id === messageId);
+        if (messageIndex === -1 || messageIndex === 0) return;
 
-        if (savedTheme === 'light') {
-            this.particles.forEach(particle => {
-                particle.hue = Math.random() * 60 + 200;
-            });
-        }
-    }
+        // Remove the message to regenerate
+        this.currentMessages.splice(messageIndex, 1);
 
-    async clearMemory() {
-        if (this.isProcessing) return;
-
-        try {
-            const response = await fetch('/clear_memory', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if (response.ok) {
-                // Clear UI messages except welcome
-                const messages = this.messagesContainer.querySelectorAll('.message');
-                messages.forEach((message, index) => {
-                    if (index > 0) { // Keep the welcome message
-                        message.style.opacity = '0';
-                        message.style.transform = 'translateX(20px)';
-                        setTimeout(() => message.remove(), 300);
-                    }
-                });
-
-                this.updateMemoryStatus();
-
-                // Add confirmation message
-                this.addMessage('Conversation memory cleared. How can I help you today?', 'assistant');
+        // Find the previous user message and resend
+        for (let i = messageIndex - 1; i >= 0; i--) {
+            if (this.currentMessages[i].role === 'user') {
+                this.renderMessages();
+                this.messageInput.value = this.currentMessages[i].content;
+                this.sendMessage();
+                break;
             }
-        } catch (error) {
-            console.error('Error clearing memory:', error);
         }
     }
 
-    async updateMemoryStatus() {
-        try {
-            const response = await fetch('/memory_status');
-            if (response.ok) {
-                const data = await response.json();
-                this.memoryCount.textContent = data.message_count;
+    editMessage(messageId) {
+        const message = this.currentMessages.find(m => m.id === messageId);
+        if (!message || message.role !== 'user') return;
+
+        const newContent = prompt('Edit message:', message.content);
+        if (newContent && newContent.trim() !== message.content) {
+            message.content = newContent.trim();
+            this.renderMessages();
+            this.showToast('Message updated');
+        }
+    }
+
+    deleteMessage(messageId) {
+        const messageIndex = this.currentMessages.findIndex(m => m.id === messageId);
+        if (messageIndex === -1) return;
+
+        this.currentMessages.splice(messageIndex, 1);
+        this.renderMessages();
+        this.updateWelcomeScreen();
+        this.showToast('Message deleted');
+    }
+
+    // ===== Utility Functions =====
+    handleInputKeydown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.sendMessage();
+        }
+    }
+
+    handleInputChange() {
+        this.autoResizeTextarea();
+        this.updateSendButton();
+    }
+
+    handleFileAttach() {
+        // Create file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*,.pdf,.txt,.doc,.docx';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFileUpload(file);
             }
-        } catch (error) {
-            console.error('Error updating memory status:', error);
-        }
+        };
+        input.click();
     }
 
-    saveMemoryPreference() {
-        localStorage.setItem('aeon-memory-pref', this.usePersistentMemory);
+    handleFileUpload(file) {
+        this.showToast(`File "${file.name}" uploaded (feature coming soon)`);
     }
 
-    loadMemoryPreference() {
-        const saved = localStorage.getItem('aeon-memory-pref');
-        if (saved !== null) {
-            this.usePersistentMemory = saved === 'true';
-            this.memoryToggle.checked = this.usePersistentMemory;
+    handleVoiceInput() {
+        if (!('webkitSpeechRecognition' in window)) {
+            this.showToast('Voice input is not supported in your browser');
+            return;
         }
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            this.microphoneBtn.style.color = 'var(--accent-primary)';
+            this.showToast('Listening...');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            this.messageInput.value = transcript;
+            this.autoResizeTextarea();
+            this.updateSendButton();
+            this.showToast('Voice input captured');
+        };
+
+        recognition.onerror = (event) => {
+            this.showToast('Voice input error: ' + event.error);
+        };
+
+        recognition.onend = () => {
+            this.microphoneBtn.style.color = '';
+        };
+
+        recognition.start();
     }
 
-    playChime() {
-        if (this.chimeAudio) {
-            this.chimeAudio.currentTime = 0;
-            this.chimeAudio.play().catch(() => {
-                // Ignore audio play errors (user may not have interacted with page)
-            });
-        }
+    handleModelChange(model) {
+        this.showToast(`Model changed to ${model}`);
     }
 
     handleResize() {
-        this.resizeCanvas();
-
-        // Adjust particle count based on screen size
-        const targetCount = Math.min(100, Math.floor((window.innerWidth * window.innerHeight) / 15000));
-        const currentCount = this.particles.length;
-
-        if (targetCount > currentCount) {
-            for (let i = currentCount; i < targetCount; i++) {
-                this.particles.push({
-                    x: Math.random() * this.canvas.width,
-                    y: Math.random() * this.canvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.5,
-                    opacity: Math.random() * 0.5 + 0.3,
-                    hue: Math.random() * 60 + 160
-                });
-            }
-        } else if (targetCount < currentCount) {
-            this.particles = this.particles.slice(0, targetCount);
+        // Handle responsive sidebar
+        if (window.innerWidth <= 768) {
+            this.sidebar.classList.add('hidden');
         }
     }
 
+    showChatContextMenu(event, chatId) {
+        // Simple context menu implementation
+        if (confirm('Delete this chat?')) {
+            this.deleteChat(chatId);
+        }
+    }
+
+    showHelp() {
+        alert(`Keyboard Shortcuts:
+
+Ctrl/Cmd + K - New chat
+Ctrl/Cmd + / - Focus input
+Ctrl/Cmd + S - Settings
+Ctrl/Cmd + D - Toggle dark mode
+Escape - Close modal / Focus input
+
+Features:
+• Click on suggestion cards for quick prompts
+• Right-click chat history for options
+• Hover over messages for action buttons
+• Use voice input with the microphone button
+• Export conversations for backup`);
+    }
+
+    showToast(message) {
+        this.toastMessage.textContent = message;
+        this.toast.classList.add('show');
+
+        setTimeout(() => {
+            this.toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // ===== Helper Functions =====
     generateConversationId() {
         return 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    generateChatId() {
+        return 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    generateMessageId() {
+        return 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    generateChatTitle(firstMessage) {
+        const words = firstMessage.split(' ').slice(0, 5);
+        return words.join(' ') + (words.length === 5 ? '...' : '');
+    }
+
+    formatChatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffInHours = (now - date) / (1000 * 60 * 60);
+
+        if (diffInHours < 1) {
+            return 'Just now';
+        } else if (diffInHours < 24) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else {
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
     }
 
     escapeHtml(text) {
@@ -428,55 +841,15 @@ class AEONInfinity {
 
 // Initialize AEON when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.AEON = new AEONInfinity();
+    window.aeon = new AEONGeminiInterface();
 
-    // Add some interactivity to the logo
-    const aeonLogo = document.getElementById('aeonLogo');
-    let clickCount = 0;
-
-    aeonLogo.addEventListener('click', () => {
-        clickCount++;
-        if (clickCount >= 3) {
-            clickCount = 0;
-
-            // Easter egg: Special animation
-            const orb = aeonLogo.querySelector('.orb-container');
-            orb.style.animation = 'none';
-            setTimeout(() => {
-                orb.style.animation = 'orbRotation 2s linear infinite';
-            }, 10);
-
-            // Add special message
-            if (window.AEON) {
-                window.AEON.addMessage(
-                    'Infinity! You\'ve discovered the infinity sequence! AEON acknowledges your curiosity.',
-                    'assistant'
-                );
-            }
-        }
-    });
-
-    // Performance optimization: Reduce particles on low-end devices
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        if (window.AEON && window.AEON.particles) {
-            window.AEON.particles = window.AEON.particles.slice(0, 20);
-        }
-    }
-
-    console.log('🌌 AEON Infinity Intelligence initialized');
+    console.log('🌌 AEON Infinity - Gemini Interface Initialized');
     console.log('Created by Apratim Mrinal');
 });
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
-    if (window.AEON && window.AEON.animationId) {
-        cancelAnimationFrame(window.AEON.animationId);
+    if (window.aeon) {
+        window.aeon.saveCurrentChat();
     }
 });
-
-// Service Worker for PWA (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // Service worker registration can be added here for PWA functionality
-    });
-}
