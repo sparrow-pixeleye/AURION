@@ -152,7 +152,7 @@ def get_ai_response(user_message: str) -> str:
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://aeon-infinity.app",  # Optional: your app URL
-            "X-Title": "AEON ∞ Infinity Intelligence"
+            "X-Title": "AEON Infinity Intelligence"
         }
 
         payload = {
