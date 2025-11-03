@@ -4,7 +4,7 @@
 
 > The ultimate AI web application that embodies the collective reasoning, empathy, and precision of every major AI system. AEON Infinity combines advanced conversational intelligence with real-time web search, time awareness, and a breathtaking 3D animated interface.
 
-![AEON Logo](https://img.shields.io/badge/AEON-∞%20Infinity%20Intelligence-00FFFF?style=for-the-badge&logo=infinity)
+![AEON Logo](https://img.shields.io/badge/AEON-Infinity%20Intelligence-00FFFF?style=for-the-badge&logo=infinity)
 ![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0+-000000?style=for-the-badge&logo=flask)
 ![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)
