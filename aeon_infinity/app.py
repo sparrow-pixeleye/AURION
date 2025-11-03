@@ -240,7 +240,7 @@ def health_check():
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
         'version': '1.0.0',
-        'service': 'AEON ∞ Infinity Intelligence'
+        'service': 'AEON Infinity Intelligence'
     })
 
 
