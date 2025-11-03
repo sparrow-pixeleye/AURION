@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    console.log('🌌 AEON ∞ (Infinity Intelligence) initialized');
+    console.log('🌌 AEON Infinity Intelligence initialized');
     console.log('Created by Apratim Mrinal');
 });
 
