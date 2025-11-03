@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEON ∞ — Infinity Intelligence</title>
+    <meta name="description" content="AEON ∞ — The ultimate AI intelligence interface created by Apratim Mrinal">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Meta tags for PWA -->
+    <meta name="theme-color" content="#0A0F1F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <!-- Animated Background Canvas -->
+    <canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- AEON Header -->
+        <header class="aeon-header">
+            <div class="header-content">
+                <!-- AEON Logo/Orb -->
+                <div class="aeon-logo" id="aeonLogo">
+                    <div class="orb-container">
+                        <div class="orb-inner"></div>
+                        <div class="orb-outer"></div>
+                        <div class="orb-glow"></div>
+                        <div class="orb-pulse"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="aeon-title">AEON ∞</h1>
+                        <p class="aeon-subtitle">Infinity Intelligence</p>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="header-controls">
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Theme (Ctrl+T)">
+                        <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <main class="chat-container">
+            <div class="chat-wrapper">
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Welcome Message -->
+                    <div class="message assistant-message fade-in">
+                        <div class="message-avatar">
+                            <div class="avatar-orb"></div>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                Welcome to AEON ∞ — Infinity Intelligence. I embody the collective wisdom and precision of every major AI, with real-time awareness and access to live web data. How may I assist you today?
+                            </div>
+                            <div class="message-timestamp">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-orb">
+                        <div class="loading-pulse"></div>
+                    </div>
+                    <div class="loading-text">Thinking...</div>
+                </div>
+
+                <!-- Memory Status -->
+                <div class="memory-status" id="memoryStatus">
+                    <span class="memory-info">
+                        <span id="memoryCount">0</span> / 20 messages
+                    </span>
+                    <button class="clear-memory-btn" id="clearMemoryBtn" title="Clear Memory (Ctrl+L)">
+                        Clear
+                    </button>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <textarea
+                            class="message-input"
+                            id="messageInput"
+                            placeholder="Ask me anything..."
+                            rows="1"
+                            maxlength="2000"
+                        ></textarea>
+                        <button class="send-button" id="sendButton" title="Send Message (Enter)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Memory Toggle -->
+                    <div class="memory-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="memoryToggle" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Persistent Memory</span>
+                        </label>
+                    </div>
+
+                    <!-- Keyboard Shortcuts -->
+                    <div class="keyboard-shortcuts">
+                        <span class="shortcut">Enter → Send</span>
+                        <span class="shortcut">Shift+Enter → New Line</span>
+                        <span class="shortcut">Ctrl+L → Clear</span>
+                        <span class="shortcut">Ctrl+T → Theme</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="aeon-footer">
+            <p>Created by Apratim Mrinal</p>
+        </footer>
+    </div>
+
+    <!-- Audio for chime -->
+    <audio id="chimeAudio" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
