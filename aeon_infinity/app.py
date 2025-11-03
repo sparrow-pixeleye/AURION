@@ -202,8 +202,29 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
             else:
                 return "I apologize, but I received an unexpected response format. Please try again."
         else:
-            print(f"OpenRouter API error: {response.status_code} - {response.text}")
-            return "I apologize, but the AI service is temporarily unavailable. Please try again later."
+            print(f"OpenRouter API error with {selected_model}: {response.status_code} - {response.text}")
+
+            # Try fallback models
+            for fallback_model in FALLBACK_MODELS:
+                try:
+                    payload["model"] = fallback_model
+                    fallback_response = requests.post(
+                        OPENROUTER_API_URL,
+                        headers=headers,
+                        json=payload,
+                        timeout=30
+                    )
+
+                    if fallback_response.status_code == 200:
+                        fallback_data = fallback_response.json()
+                        if 'choices' in fallback_data and len(fallback_data['choices']) > 0:
+                            print(f"Successfully used fallback model: {fallback_model}")
+                            return fallback_data['choices'][0]['message']['content'].strip()
+                except Exception as fallback_error:
+                    print(f"Fallback model {fallback_model} also failed: {fallback_error}")
+                    continue
+
+            return "I apologize, but all AI models are currently unavailable. Please try again later."
 
     except requests.exceptions.Timeout:
         return "I apologize, but the request timed out. Please try again."
