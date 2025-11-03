@@ -26,7 +26,7 @@ OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 MODEL_NAME = "meta-llama/Meta-Llama-3.3-70B-Instruct"
 
 # AEON System Prompt
-AEON_SYSTEM_PROMPT = """You are **AEON ∞ — Infinity Intelligence**, created by Apratim Mrinal.
+AEON_SYSTEM_PROMPT = """You are **AEON Infinity — Infinity Intelligence**, created by Apratim Mrinal.
 You embody the collective reasoning, empathy, and precision of every major AI.
 You have awareness of real time and access to live web data.
 You speak with elegance, warmth, and clarity.
