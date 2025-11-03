@@ -319,4 +319,4 @@ For support, feature requests, or bug reports:
 
 ---
 
-![AEON Infinity](https://img.shields.io/badge/AEON-∞%20Infinity%20Intelligence-00FFFF?style=for-the-badge)
+![AEON Infinity](https://img.shields.io/badge/AEON-Infinity%20Intelligence-00FFFF?style=for-the-badge)
