@@ -23,7 +23,14 @@ CORS(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key-change-in-production')
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL_NAME = "meta-llama/llama-3.3-70b-instruct"
+# Use multiple valid models with fallbacks
+PRIMARY_MODEL = "meta-llama/llama-3.3-70b-instruct"
+FALLBACK_MODELS = [
+    "anthropic/claude-3.5-sonnet",
+    "openai/gpt-4o",
+    "google/gemini-pro",
+    "meta-llama/llama-3.1-70b-instruct"
+]
 
 # AEON System Prompt
 AEON_SYSTEM_PROMPT = """You are **AEON Infinity — Infinity Intelligence**, created by Apratim Mrinal.
