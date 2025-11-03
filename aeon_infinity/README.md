@@ -211,7 +211,7 @@ particle.hue = Math.random() * 60 + 160; // Cyan to violet range
 Customize AEON's personality in `app.py`:
 
 ```javascript
-AEON_SYSTEM_PROMPT = """You are **AEON ∞ — Infinity Intelligence**, created by Apratim Mrinal.
+AEON_SYSTEM_PROMPT = """You are **AEON Infinity — Infinity Intelligence**, created by Apratim Mrinal.
 // ... customize the prompt here
 """
 ```
