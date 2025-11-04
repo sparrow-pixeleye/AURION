@@ -146,10 +146,18 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
     try:
         if not OPENROUTER_API_KEY:
             print("ERROR: OpenRouter API key not configured")
-            return "I apologize, but the AI service is not configured. Please set up your OpenRouter API key."
+            return "I apologize, but the AI service is not configured. Please set up your OpenRouter API key in your .env file."
 
-        print(f"DEBUG: Using API key: {OPENROUTER_API_KEY[:10]}...")
+        print(f"DEBUG: Using API key: {OPENROUTER_API_KEY[:10] if OPENROUTER_API_KEY else 'None'}...")
         print(f"DEBUG: Selected model: {model_mapping.get(model, PRIMARY_MODEL)}")
+
+        # Test basic connectivity first
+        try:
+            import requests
+            print("DEBUG: requests module available")
+        except ImportError as e:
+            print(f"ERROR: requests module not available: {e}")
+            return "I apologize, but the required dependencies are not installed. Please run: pip install -r requirements.txt"
 
         # Get conversation memory for context
         memory = get_memory()
