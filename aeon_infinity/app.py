@@ -168,7 +168,7 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
             "X-Title": "AEON Infinity Intelligence"
         }
 
-            # Map model names to actual models
+        # Map model names to actual models
         model_mapping = {
             'aeon-infinity': PRIMARY_MODEL,
             'aeon-creative': "anthropic/claude-3.5-sonnet",
