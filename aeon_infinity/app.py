@@ -247,6 +247,8 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
         return "I apologize, but I'm having trouble connecting to the AI service. Please check your connection and try again."
     except Exception as e:
         print(f"AI response error: {e}")
+        import traceback
+        traceback.print_exc()
         return "I apologize, but an unexpected error occurred. Please try again."
 
 
