@@ -59,7 +59,10 @@ def chat():
     """
     try:
         data = request.get_json()
+        print(f"DEBUG: Received data: {data}")
+
         if not data or 'message' not in data:
+            print("ERROR: No message provided in request")
             return jsonify({
                 'error': 'No message provided',
                 'type': 'error'
