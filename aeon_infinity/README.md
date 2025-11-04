@@ -53,13 +53,28 @@
    pip install -r requirements.txt
    ```
 
-3. **Set Up Environment**:
+3. **Configure OpenRouter API Key**:
    ```bash
-   # Copy the example environment file
-   cp .env.example .env
+   # Method 1: Interactive setup (Recommended)
+   python setup.py
 
-   # Edit .env with your OpenRouter API key
-   # OPENROUTER_API_KEY=your_openrouter_api_key_here
+   # Method 2: Manual setup
+   cp .env.example .env
+   # Edit .env and replace "your_openrouter_api_key_here" with your actual key
+   ```
+
+   **🔑 Getting your API key:**
+   1. Visit [OpenRouter.ai](https://openrouter.ai/keys)
+   2. Sign up for a free account
+   3. Create a new API key (starts with `sk-or-v1-`)
+   4. Add the key to your `.env` file
+
+   **Your `.env` file should look like:**
+   ```env
+   OPENROUTER_API_KEY=sk-or-v1-your-actual-api-key-here
+   FLASK_ENV=development
+   PORT=5000
+   SECRET_KEY=aeon-infinity-secret-key
    ```
 
 4. **Run AEON Infinity**:
