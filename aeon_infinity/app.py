@@ -144,9 +144,24 @@ def get_ai_response(user_message: str, model: str = 'aeon-infinity', temperature
         AI response text
     """
     try:
-        if not OPENROUTER_API_KEY:
+        if not OPENROUTER_API_KEY or OPENROUTER_API_KEY == "your_openrouter_api_key_here":
             print("ERROR: OpenRouter API key not configured")
-            return "I apologize, but the AI service is not configured. Please set up your OpenRouter API key in your .env file."
+            return """🔑 **API Key Required**
+
+To use AEON Infinity, you need to configure your OpenRouter API key:
+
+**Steps:**
+1. Get a free API key from [OpenRouter.ai](https://openrouter.ai/keys)
+2. Open the `.env` file in the aeon_infinity folder
+3. Replace `your_openrouter_api_key_here` with your actual API key
+4. Restart the application
+
+**Example .env file:**
+```
+OPENROUTER_API_KEY=sk-or-v1-your-actual-api-key-here
+```
+
+The AI service will work once you add a valid API key."""
 
         print(f"DEBUG: Using API key: {OPENROUTER_API_KEY[:10] if OPENROUTER_API_KEY else 'None'}...")
         print(f"DEBUG: Selected model: {model_mapping.get(model, PRIMARY_MODEL)}")
