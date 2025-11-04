@@ -295,6 +295,17 @@ def health_check():
     })
 
 
+@app.route('/test', methods=['GET'])
+def test_endpoint():
+    """Test endpoint for debugging."""
+    return jsonify({
+        'status': 'working',
+        'timestamp': datetime.now().isoformat(),
+        'openrouter_key_configured': bool(OPENROUTER_API_KEY),
+        'primary_model': PRIMARY_MODEL
+    })
+
+
 @app.route('/models', methods=['GET'])
 def list_models():
     """List available models."""
